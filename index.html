@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOG Virtual Gallery</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: sans-serif;
+            background-color: #272727;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            padding: 20px;
+            margin: 0;
+            color: white;
+        }
+        iframe {
+            width: 90%;
+            height: 80%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SOG Virtual Gallery</h1>
+
+        <!-- The iframe now has an ID and an empty src -->
+        <iframe id="splat-viewer-frame" src=""></iframe>
+
+    </div>
+
+    <!-- This script will set the iframe's source after the page loads -->
+    <script>
+        // Wait for the entire page to load before running the script
+        window.onload = function() {
+            // Find the iframe element by its ID
+            const iframe = document.getElementById('splat-viewer-frame');
+
+            // Set its source to the correct URL. The server's security scan is already done.
+            if (iframe) {
+                iframe.src = "/sovg/splat-viewer/dist/index.html?content=/sovg/06-compressed.ply";
+            }
+        };
+    </script>
+
+</body>
+</html>
