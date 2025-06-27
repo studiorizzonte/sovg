@@ -1,23 +1,23 @@
 {
   "background": {
     "color": [
-      0.5,
-      0.1,
-      0.1,
+      0,
+      0,
+      0,
       1
     ]
   },
   "camera": {
     "fov": 90,
     "position": [
-      3,
+      -2,
       1,
       1
     ],
     "target": [
       0,
-      0,
-      0
+      1,
+      1
     ],
     "startAnim": "none"
   }
