@@ -85008,41 +85008,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 // START: USE THIS FINAL CODE BLOCK AT THE END OF THE FILE
 // =====================================================================
 
-// Get the <pc-app> element from the document using a unique variable name
+// Get the <pc-app> element from the document
 const pcAppElement = document.querySelector('pc-app');
 
 // Listen for the 'app:ready' event, which is fired when the engine is initialized
 pcAppElement.addEventListener('app:ready', () => {
-    // By the time this function runs, we are GUARANTEED that 'pc.app' exists.
+    // This code runs only after the PlayCanvas app is ready.
+    console.log('PlayCanvas App is ready. Setting up custom buttons.');
 
-    // Find the entity named 'splat' in the scene hierarchy
-    const splatEntity = pc.app.root.findByName('splat');
+    const app = pc.app;
+    const splatEntity = app.root.findByName('splat');
 
-    // Check that we found the entity and its 'splat' script component
     if (splatEntity && splatEntity.script && splatEntity.script.splat) {
         const splatScript = splatEntity.script.splat;
 
-        // --- Button to load the high-res table ---
+        // This is a helper function to load a new splat file.
+        const loadSplat = (filename) => {
+            const url = `./splats/${filename}`;
+            console.log(`Button clicked. Attempting to load splat: ${url}`);
+
+            // The correct PlayCanvas way: find or create an asset, then assign it.
+            let asset = app.assets.findByUrl(url);
+
+            if (!asset) {
+                // If the asset doesn't exist, create it.
+                console.log(`Asset for ${filename} not found. Creating new asset.`);
+                asset = new pc.Asset(filename, 'binary', {
+                    url: url
+                });
+                app.assets.add(asset);
+                app.assets.load(asset);
+            } else {
+                console.log(`Asset for ${filename} already exists. Using it.`);
+            }
+
+            // Assign the new asset to the splat script's 'splatAsset' property.
+            // This is the key step that tells the component to switch models.
+            splatScript.splatAsset = asset.id;
+        };
+
+        // --- Attach logic to the "Load Table" button ---
         const loadTableButton = document.getElementById('loadTableBtn');
         if (loadTableButton) {
             loadTableButton.addEventListener('click', () => {
-                console.log('Loading high-res table...');
-                // Call the load function on the splat script component
-                splatScript.load('./splats/table.ply');
+                loadSplat('table.ply');
             });
         }
 
-        // --- Button to load the original overview ---
+        // --- Attach logic to the "Load Overview" button ---
         const loadOverviewButton = document.getElementById('loadOverviewBtn');
         if (loadOverviewButton) {
             loadOverviewButton.addEventListener('click', () => {
-                console.log('Loading overview...');
-                splatScript.load('./splats/room-overview.ply');
+                loadSplat('room-overview.ply');
             });
         }
 
     } else {
-        console.error("Could not find the 'splat' script component on the 'splat' entity.");
+        console.error("Critical error: Could not find the 'splat' script component on the 'splat' entity.");
     }
 });
 // =====================================================================
