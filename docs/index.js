@@ -85004,35 +85004,50 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-	// START: ADD THIS CODE AT THE VERY END
-// wait for the app and viewer to be ready
-pc.app.on('viewer:ready', () => {
-    // find the entity named 'splat' in the scene
+	// =====================================================================
+// START: USE THIS FINAL CODE BLOCK AT THE END OF THE FILE
+// =====================================================================
+
+// Get the <pc-app> element from the document using a unique variable name
+const pcAppElement = document.querySelector('pc-app');
+
+// Listen for the 'app:ready' event, which is fired when the engine is initialized
+pcAppElement.addEventListener('app:ready', () => {
+    // By the time this function runs, we are GUARANTEED that 'pc.app' exists.
+
+    // Find the entity named 'splat' in the scene hierarchy
     const splatEntity = pc.app.root.findByName('splat');
 
-    // check that we found it and it has the splat script
+    // Check that we found the entity and its 'splat' script component
     if (splatEntity && splatEntity.script && splatEntity.script.splat) {
         const splatScript = splatEntity.script.splat;
 
         // --- Button to load the high-res table ---
         const loadTableButton = document.getElementById('loadTableBtn');
-        loadTableButton.addEventListener('click', () => {
-            console.log('Loading high-res table...');
-            // call the load function on the splat script component
-            splatScript.load('./splats/table.ply');
-        });
+        if (loadTableButton) {
+            loadTableButton.addEventListener('click', () => {
+                console.log('Loading high-res table...');
+                // Call the load function on the splat script component
+                splatScript.load('./splats/table.ply');
+            });
+        }
 
         // --- Button to load the original overview ---
         const loadOverviewButton = document.getElementById('loadOverviewBtn');
-        loadOverviewButton.addEventListener('click', () => {
-            console.log('Loading overview...');
-            splatScript.load('./splats/room-overview.ply');
-        });
+        if (loadOverviewButton) {
+            loadOverviewButton.addEventListener('click', () => {
+                console.log('Loading overview...');
+                splatScript.load('./splats/room-overview.ply');
+            });
+        }
 
     } else {
-        console.error("Could not find the 'splat' script component.");
+        console.error("Could not find the 'splat' script component on the 'splat' entity.");
     }
 });
-// END: ADD THIS CODE
+// =====================================================================
+// END: FINAL CODE BLOCK
+// =====================================================================
+
 });
 //# sourceMappingURL=index.js.map
