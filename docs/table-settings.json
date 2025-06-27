@@ -1,0 +1,24 @@
+{
+  "background": {
+    "color": [
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "camera": {
+    "fov": 90,
+    "position": [
+      -2,
+      1,
+      -2
+    ],
+    "target": [
+      0,
+      1,
+      0
+    ],
+    "startAnim": "none"
+  }
+}

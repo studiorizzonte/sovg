@@ -85002,74 +85002,39 @@ document.addEventListener('DOMContentLoaded', async () => {
                     break;
             }
         }
-    });
+    });	
 
-	// =====================================================================
-// START: USE THIS FINAL CODE BLOCK AT THE END OF THE FILE
-// =====================================================================
+		// =====================================================================
+    // START: USE THIS FINAL, CORRECTED CODE BLOCK
+    // =====================================================================
 
-// Get the <pc-app> element from the document
-const pcAppElement = document.querySelector('pc-app');
+    // Use event delegation on the parent container for robustness.
+    const buttonContainer = document.getElementById('buttonContainer');
+    if (buttonContainer) {
+        buttonContainer.addEventListener('click', (event) => {
+            // Find which button was clicked, if any.
+            const button = event.target.closest('button');
+            if (!button) return;
 
-// Listen for the 'app:ready' event, which is fired when the engine is initialized
-pcAppElement.addEventListener('app:ready', () => {
-    // This code runs only after the PlayCanvas app is ready.
-    console.log('PlayCanvas App is ready. Setting up custom buttons.');
+            const baseUrl = window.location.href.split('?')[0];
 
-    const app = pc.app;
-    const splatEntity = app.root.findByName('splat');
-
-    if (splatEntity && splatEntity.script && splatEntity.script.splat) {
-        const splatScript = splatEntity.script.splat;
-
-        // This is a helper function to load a new splat file.
-        const loadSplat = (filename) => {
-            const url = `./splats/${filename}`;
-            console.log(`Button clicked. Attempting to load splat: ${url}`);
-
-            // The correct PlayCanvas way: find or create an asset, then assign it.
-            let asset = app.assets.findByUrl(url);
-
-            if (!asset) {
-                // If the asset doesn't exist, create it.
-                console.log(`Asset for ${filename} not found. Creating new asset.`);
-                asset = new pc.Asset(filename, 'binary', {
-                    url: url
-                });
-                app.assets.add(asset);
-                app.assets.load(asset);
-            } else {
-                console.log(`Asset for ${filename} already exists. Using it.`);
+            if (button.id === 'loadTableBtn') {
+                console.log("Table button click detected. Navigating...");
+                // Reload the page, specifying BOTH the new content AND its custom settings file.
+                window.location.href = `${baseUrl}?content=splats/table.ply&settings=table-settings.json`;
+            } else if (button.id === 'loadOverviewBtn') {
+                console.log("Overview button click detected. Navigating...");
+                // Navigate to the clean base URL to load the default overview scene and settings.
+                window.location.href = baseUrl;
             }
-
-            // Assign the new asset to the splat script's 'splatAsset' property.
-            // This is the key step that tells the component to switch models.
-            splatScript.splatAsset = asset.id;
-        };
-
-        // --- Attach logic to the "Load Table" button ---
-        const loadTableButton = document.getElementById('loadTableBtn');
-        if (loadTableButton) {
-            loadTableButton.addEventListener('click', () => {
-                loadSplat('table.ply');
-            });
-        }
-
-        // --- Attach logic to the "Load Overview" button ---
-        const loadOverviewButton = document.getElementById('loadOverviewBtn');
-        if (loadOverviewButton) {
-            loadOverviewButton.addEventListener('click', () => {
-                loadSplat('room-overview.ply');
-            });
-        }
-
+        });
     } else {
-        console.error("Critical error: Could not find the 'splat' script component on the 'splat' entity.");
+        console.error("Critical error: Could not find the #buttonContainer element.");
     }
-});
-// =====================================================================
-// END: FINAL CODE BLOCK
-// =====================================================================
+
+    // =====================================================================
+    // END: FINAL, CORRECTED CODE BLOCK
+    // =====================================================================
 
 });
 //# sourceMappingURL=index.js.map
