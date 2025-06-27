@@ -129,6 +129,50 @@ class Viewer {
         // calculate scene bounding box
         const bbox = gsplat?.instance?.meshInstance?.aabb ?? new BoundingBox();
 
+            // ===================================================================
+    // === START: INVISIBLE FLOOR COORDINATE FINDER ======================
+    // ===================================================================
+
+    // Create a large, invisible plane entity to act as our "floor" for raycasting.
+    const floorEntity = new Entity('ClickableFloor');
+
+    // Add a collision component to make it "hittable" by the raycast.
+    floorEntity.addComponent('collision', {
+        type: 'box',
+        // Make it very large on the X and Z axes, but thin on the Y axis.
+        halfExtents: new Vec3(100, 0.01, 100)
+    });
+
+    // We can position the floor at the bottom of our scene's bounding box.
+    // You might need to adjust the Y value slightly to match your scene's floor level.
+    const floorYPosition = bbox.getMin().y;
+    floorEntity.setPosition(bbox.center.x, floorYPosition, bbox.center.z);
+    
+    // Add it to the scene. Since it has no 'render' component, it will be invisible.
+    app.root.addChild(floorEntity);
+    
+    // This listener will now report coordinates by hitting the invisible floor.
+    app.mouse.on('mousedown', (event) => {
+        const cameraComponent = entity.camera;
+        const from = cameraComponent.screenToWorld(event.x, event.y, cameraComponent.nearClip);
+        const to = cameraComponent.screenToWorld(event.x, event.y, cameraComponent.farClip);
+
+        const result = app.systems.rigidbody.raycastFirst(from, to);
+
+        // Check if we hit our special floor entity.
+        if (result && result.entity.name === 'ClickableFloor') {
+            const point = result.point;
+            // The Y-coordinate will be the floor's Y. This is usually what we want.
+            // We can add a small offset to raise the hotspot slightly off the floor.
+            const hotspotY = point.y + 0.5; // Raise it by 0.5 units (e.g., to sofa cushion height)
+            console.log(`Clicked Coordinate: new Vec3(${point.x.toFixed(2)}, ${hotspotY.toFixed(2)}, ${point.z.toFixed(2)})`);
+        }
+    }, this);
+
+    // ===================================================================
+    // === END: INVISIBLE FLOOR COORDINATE FINDER ========================
+    // ===================================================================
+
         // override gsplat shader for picking
         const { instance } = gsplat;
         instance.createMaterial({
